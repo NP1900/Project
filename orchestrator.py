@@ -85,6 +85,19 @@ def main():
 
     active = [ev for ev in deduped if not is_expired(ev)]
 
+    # If every agent returned zero events (e.g. all 403'd), preserve the
+    # existing events.json rather than overwriting with an empty array.
+    if not active:
+        existing_path = Path("data/events.json")
+        if existing_path.exists():
+            try:
+                existing = json.loads(existing_path.read_text(encoding="utf-8"))
+                if existing:
+                    logging.warning("All agents returned 0 events — preserving existing events.json")
+                    active = existing
+            except Exception:
+                pass
+
     # Sort by severity asc (HIGH first) then posted_at desc
     sev_order = {"HIGH": 0, "MED": 1, "LOW": 2}
     active.sort(

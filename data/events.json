@@ -1,1 +1,173 @@
-[]
+[
+  {
+    "notice_id": "SEED-001",
+    "pipe": "TGP",
+    "company": "kinder_morgan",
+    "title": "Operational Flow Order \u2014 System-Wide Demand Reduction Required",
+    "source": "critical_notice",
+    "critical": true,
+    "severity": "HIGH",
+    "posted_at": "2026-05-25T08:00:00+00:00",
+    "last_seen_at": "2026-05-26T18:00:00+00:00",
+    "start": "2026-05-25T10:00:00+00:00",
+    "end": "2026-05-28T22:00:00+00:00",
+    "locations": [
+      "Zone 4 \u2014 Niagara to Cromwell",
+      "CS 245",
+      "CS 261"
+    ],
+    "available_cap": "850000",
+    "flow_detail": "An Operational Flow Order (OFO) has been issued effective 10:00 AM on 5/25/2026. All shippers on Zone 4 are required to reduce scheduled volumes to no more than 90% of nominated quantities. Failure to comply will result in imbalance charges at 200% of the spot price.",
+    "affected_meters": null,
+    "ebb_url": null
+  },
+  {
+    "notice_id": "SEED-003",
+    "pipe": "TRANSCO",
+    "company": "williams",
+    "title": "Unplanned Outage \u2014 Mainline Valve Replacement, Station 195",
+    "source": "critical_notice",
+    "critical": true,
+    "severity": "HIGH",
+    "posted_at": "2026-05-26T03:15:00+00:00",
+    "last_seen_at": "2026-05-26T18:00:00+00:00",
+    "start": "2026-05-26T04:00:00+00:00",
+    "end": null,
+    "locations": [
+      "Station 195",
+      "Zone 5 \u2014 South Georgia"
+    ],
+    "available_cap": null,
+    "flow_detail": "An unplanned emergency outage began at 04:00 on 5/26/2026 due to a failed mainline valve at Station 195. Zone 5 south of Station 195 is currently isolated. No estimated restoration time available.",
+    "affected_meters": null,
+    "ebb_url": null
+  },
+  {
+    "notice_id": "SEED-007",
+    "pipe": "PEPL",
+    "company": "energy_transfer",
+    "title": "Force Majeure \u2014 Tornado Damage, Kansas Compressor Station 8",
+    "source": "critical_notice",
+    "critical": true,
+    "severity": "HIGH",
+    "posted_at": "2026-05-26T12:00:00+00:00",
+    "last_seen_at": "2026-05-26T18:00:00+00:00",
+    "start": "2026-05-26T11:30:00+00:00",
+    "end": null,
+    "locations": [
+      "Kansas Compressor Station 8",
+      "Hugoton Lateral"
+    ],
+    "available_cap": null,
+    "flow_detail": "Force Majeure declared effective 11:30 AM CT on May 26, 2026. Severe tornado damage to Kansas Compressor Station 8 has caused complete loss of compression on the Hugoton Lateral. All receipts from the Hugoton field are suspended until further notice.",
+    "affected_meters": null,
+    "ebb_url": null
+  },
+  {
+    "notice_id": "SEED-008",
+    "pipe": "TGP",
+    "company": "kinder_morgan",
+    "title": "Upcoming Maintenance \u2014 Line 100-1 MP 842\u2013861 Hydrostatic Test",
+    "source": "non_critical_notice",
+    "critical": false,
+    "severity": "MED",
+    "posted_at": "2026-05-22T08:00:00+00:00",
+    "last_seen_at": "2026-05-26T18:00:00+00:00",
+    "start": "2026-06-05T06:00:00+00:00",
+    "end": "2026-06-07T18:00:00+00:00",
+    "locations": [
+      "Line 100-1 MP 842\u2013861",
+      "Zone 6"
+    ],
+    "available_cap": "980000",
+    "flow_detail": "Hydrostatic pressure testing on Line 100-1 between MP 842 and MP 861 in Zone 6. Northbound capacity reduced to 980,000 Dth/d. Interruptible and secondary firm service south of MP 842 will be curtailed.",
+    "affected_meters": "Meters 18-0042, 18-0043, 18-0044",
+    "ebb_url": null
+  },
+  {
+    "notice_id": "SEED-004",
+    "pipe": "CGT",
+    "company": "tc_energy",
+    "title": "Capacity Constraint \u2014 Gulf Mainline Segment 22 Hydrostatic Test",
+    "source": "non_critical_notice",
+    "critical": false,
+    "severity": "MED",
+    "posted_at": "2026-05-23T09:00:00+00:00",
+    "last_seen_at": "2026-05-26T18:00:00+00:00",
+    "start": "2026-05-27T07:00:00+00:00",
+    "end": "2026-05-29T19:00:00+00:00",
+    "locations": [
+      "Segment 22",
+      "Compressor Station 22",
+      "Lebanon Junction"
+    ],
+    "available_cap": "750000",
+    "flow_detail": "Planned hydrostatic testing on Segment 22 will restrict northbound capacity to 750,000 Dth/d. Interruptible receipts at Lebanon Junction will be reduced proportionally.",
+    "affected_meters": "Meters 6001 through 6018",
+    "ebb_url": null
+  },
+  {
+    "notice_id": "SEED-002",
+    "pipe": "TETCO",
+    "company": "enbridge",
+    "title": "Compressor Station 115 \u2014 Planned Maintenance Outage",
+    "source": "non_critical_notice",
+    "critical": false,
+    "severity": "MED",
+    "posted_at": "2026-05-24T14:30:00+00:00",
+    "last_seen_at": "2026-05-26T18:00:00+00:00",
+    "start": "2026-05-28T06:00:00+00:00",
+    "end": "2026-05-30T18:00:00+00:00",
+    "locations": [
+      "Compressor Station 115",
+      "Market Zone M-3"
+    ],
+    "available_cap": "1200000",
+    "flow_detail": "Scheduled maintenance on Unit 3 at Compressor Station 115 will reduce available firm capacity by approximately 350,000 Dth/d in Market Zone M-3. Interruptible service may be curtailed during the maintenance window.",
+    "affected_meters": "Meters 72450, 72451, 72452",
+    "ebb_url": null
+  },
+  {
+    "notice_id": "SEED-005",
+    "pipe": "EGTS",
+    "company": "bhe_gts",
+    "title": "Reduced Deliverability \u2014 Oakford Storage Pool, Off-Rate Compressor",
+    "source": "non_critical_notice",
+    "critical": false,
+    "severity": "MED",
+    "posted_at": "2026-05-25T16:45:00+00:00",
+    "last_seen_at": "2026-05-26T18:00:00+00:00",
+    "start": "2026-05-26T00:00:00+00:00",
+    "end": "2026-05-28T12:00:00+00:00",
+    "locations": [
+      "Oakford Storage Pool",
+      "Compressor Units 4 and 5"
+    ],
+    "available_cap": "620000",
+    "flow_detail": "Units 4 and 5 at Oakford Storage are currently off-rate due to unplanned mechanical issues. Maximum withdrawal capability is reduced to approximately 620,000 Dth/d until repairs are complete.",
+    "affected_meters": null,
+    "ebb_url": null
+  },
+  {
+    "notice_id": "SEED-006",
+    "pipe": "GSPL",
+    "company": "gasquest",
+    "title": "Annual Pig Run \u2014 South Louisiana Mainline Inline Inspection",
+    "source": "non_critical_notice",
+    "critical": false,
+    "severity": "LOW",
+    "posted_at": "2026-05-20T11:00:00+00:00",
+    "last_seen_at": "2026-05-26T18:00:00+00:00",
+    "start": "2026-06-02T06:00:00+00:00",
+    "end": "2026-06-02T20:00:00+00:00",
+    "locations": [
+      "South Louisiana Mainline",
+      "Eunice Lateral",
+      "Ville Platte Junction"
+    ],
+    "available_cap": null,
+    "flow_detail": "Annual inline inspection pig run on the South Louisiana Mainline. No capacity interruptions anticipated; minor pressure fluctuations expected during the 14-hour window.",
+    "affected_meters": null,
+    "ebb_url": null
+  }
+]
