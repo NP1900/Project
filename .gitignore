@@ -4,5 +4,6 @@ __pycache__/
 .env
 config/secrets.json
 *.key
-data/cache_*.json
+data/
+site/data/cache_*.json
 *.tmp
