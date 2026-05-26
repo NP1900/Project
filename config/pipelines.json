@@ -1,0 +1,218 @@
+{
+  "companies": [
+    {
+      "id": "enbridge",
+      "agent": "agents.enbridge",
+      "enabled": true,
+      "cache_file": "data/cache_enbridge.json",
+      "pipelines": [
+        {
+          "id": "TETCO",
+          "name": "Texas Eastern Transmission",
+          "params": {
+            "pipe_code": "TE",
+            "base_url": "https://infopost.enbridge.com/infopost/"
+          },
+          "active": true
+        },
+        {
+          "id": "AGT",
+          "name": "Algonquin Gas Transmission",
+          "params": {
+            "pipe_code": "AG",
+            "base_url": "https://infopost.enbridge.com/infopost/"
+          },
+          "active": false
+        },
+        {
+          "id": "ETNG",
+          "name": "East Tennessee Natural Gas",
+          "params": {
+            "pipe_code": "ET",
+            "base_url": "https://infopost.enbridge.com/infopost/"
+          },
+          "active": false
+        }
+      ]
+    },
+    {
+      "id": "tc_energy",
+      "agent": "agents.tc_energy",
+      "enabled": true,
+      "cache_file": "data/cache_tc_energy.json",
+      "pipelines": [
+        {
+          "id": "CGT",
+          "name": "Columbia Gulf Transmission",
+          "params": {
+            "asset_id": "14",
+            "base_url": "https://ebb.tceconnects.com/infopost/"
+          },
+          "active": true
+        },
+        {
+          "id": "ANR",
+          "name": "ANR Pipeline",
+          "params": {
+            "asset_id": "3005",
+            "base_url": "https://ebb.anrpl.com/"
+          },
+          "active": false
+        },
+        {
+          "id": "TCO",
+          "name": "Columbia Gas Transmission",
+          "params": {
+            "asset_id": "12",
+            "base_url": "https://ebb.tceconnects.com/infopost/"
+          },
+          "active": false
+        }
+      ]
+    },
+    {
+      "id": "kinder_morgan",
+      "agent": "agents.kinder_morgan",
+      "enabled": true,
+      "cache_file": "data/cache_kinder_morgan.json",
+      "pipelines": [
+        {
+          "id": "TGP",
+          "name": "Tennessee Gas Pipeline",
+          "params": {
+            "code": "TGP",
+            "base_url": "https://pipeline2.kindermorgan.com/"
+          },
+          "active": true
+        },
+        {
+          "id": "EPNG",
+          "name": "El Paso Natural Gas",
+          "params": {
+            "code": "EPNG",
+            "base_url": "https://pipeline2.kindermorgan.com/"
+          },
+          "active": false
+        },
+        {
+          "id": "SNG",
+          "name": "Southern Natural Gas",
+          "params": {
+            "code": "SNG",
+            "base_url": "https://pipeline2.kindermorgan.com/"
+          },
+          "active": false
+        },
+        {
+          "id": "NGPL",
+          "name": "Natural Gas Pipeline Co.",
+          "params": {
+            "code": "NGPL",
+            "base_url": "https://pipeline2.kindermorgan.com/"
+          },
+          "active": false
+        }
+      ]
+    },
+    {
+      "id": "williams",
+      "agent": "agents.williams",
+      "enabled": true,
+      "cache_file": "data/cache_williams.json",
+      "pipelines": [
+        {
+          "id": "TRANSCO",
+          "name": "Transcontinental Gas Pipe Line",
+          "params": {
+            "base_url": "https://www.1line.williams.com/Transco/"
+          },
+          "active": true
+        },
+        {
+          "id": "NWP",
+          "name": "Northwest Pipeline",
+          "params": {
+            "base_url": "https://www.northwest.williams.com/"
+          },
+          "active": false
+        }
+      ]
+    },
+    {
+      "id": "energy_transfer",
+      "agent": "agents.energy_transfer",
+      "enabled": true,
+      "cache_file": "data/cache_energy_transfer.json",
+      "pipelines": [
+        {
+          "id": "PEPL",
+          "name": "Panhandle Eastern Pipe Line",
+          "params": {
+            "messenger_base": "http://peplmessenger.energytransfer.com",
+            "code": "pepl"
+          },
+          "active": true
+        },
+        {
+          "id": "TGC",
+          "name": "Trunkline Gas Company",
+          "params": {
+            "messenger_base": "http://tgcmessenger.energytransfer.com",
+            "code": "TGC"
+          },
+          "active": true
+        },
+        {
+          "id": "TW",
+          "name": "Transwestern Pipeline",
+          "params": {
+            "messenger_base": "https://twtransfer.energytransfer.com",
+            "code": "TW"
+          },
+          "active": false
+        }
+      ]
+    },
+    {
+      "id": "bhe_gts",
+      "agent": "agents.bhe_gts",
+      "enabled": true,
+      "cache_file": "data/cache_bhe_gts.json",
+      "pipelines": [
+        {
+          "id": "EGTS",
+          "name": "Eastern Gas Transmission and Storage",
+          "params": {
+            "base_url": "https://infopost.bhegts.com/egts"
+          },
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": "gasquest",
+      "agent": "agents.gasquest",
+      "enabled": true,
+      "cache_file": "data/cache_gasquest.json",
+      "pipelines": [
+        {
+          "id": "GSPL",
+          "name": "Gulf South Pipeline",
+          "params": {
+            "base_url": "https://gasquest.com/informational-posting",
+            "tsp_id": "78444247"
+          },
+          "active": true
+        },
+        {
+          "id": "TXGT",
+          "name": "Texas Gas Transmission",
+          "params": {
+            "base_url": "https://gasquest.com/informational-posting"
+          },
+          "active": true
+        }
+      ]
+    }
+  ]
+}

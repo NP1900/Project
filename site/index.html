@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Notices — PipelineTracker</title>
+<style>
+  :root {
+    --bg: #0f1724;
+    --surface: #1a2336;
+    --border: #2a3550;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --high: #ef4444;
+    --high-bg: #1f0a0a;
+    --med: #f59e0b;
+    --low: #3b82f6;
+    --new: #10b981;
+    --pipes-tetco: #f97316;
+    --pipes-cgt: #ef4444;
+    --pipes-tgp: #3b82f6;
+    --pipes-transco: #22c55e;
+    --pipes-pepl: #a855f7;
+    --pipes-tgc: #14b8a6;
+    --pipes-egts: #6366f1;
+    --pipes-gspl: #f59e0b;
+    --pipes-txgt: #ec4899;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; }
+
+  /* HEADER */
+  #header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 8px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  #wordmark { font-size: 16px; font-weight: 700; color: #60a5fa; white-space: nowrap; flex-shrink: 0; }
+  #filters { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; flex: 1; }
+  .pill-group { display: flex; gap: 3px; flex-wrap: wrap; }
+  .pill {
+    padding: 3px 10px; border-radius: 12px; border: 1px solid var(--border);
+    cursor: pointer; font-size: 11px; font-weight: 600; background: transparent;
+    color: var(--muted); transition: all 0.15s;
+  }
+  .pill.active { color: #fff; }
+  .pill[data-pipe="TETCO"].active { background: var(--pipes-tetco); border-color: var(--pipes-tetco); }
+  .pill[data-pipe="CGT"].active  { background: var(--pipes-cgt);   border-color: var(--pipes-cgt); }
+  .pill[data-pipe="TGP"].active  { background: var(--pipes-tgp);   border-color: var(--pipes-tgp); }
+  .pill[data-pipe="TRANSCO"].active { background: var(--pipes-transco); border-color: var(--pipes-transco); }
+  .pill[data-pipe="PEPL"].active { background: var(--pipes-pepl);  border-color: var(--pipes-pepl); }
+  .pill[data-pipe="TGC"].active  { background: var(--pipes-tgc);   border-color: var(--pipes-tgc); }
+  .pill[data-pipe="EGTS"].active { background: var(--pipes-egts);  border-color: var(--pipes-egts); }
+  .pill[data-pipe="GSPL"].active { background: var(--pipes-gspl);  border-color: var(--pipes-gspl); }
+  .pill[data-pipe="TXGT"].active { background: var(--pipes-txgt);  border-color: var(--pipes-txgt); }
+  .pill[data-sev="HIGH"].active  { background: var(--high);        border-color: var(--high); }
+  .pill[data-sev="MED"].active   { background: var(--med);         border-color: var(--med); }
+  .pill[data-sev="LOW"].active   { background: var(--low);         border-color: var(--low); }
+  .pill[data-status].active      { background: #374151;            border-color: #6b7280; }
+
+  #search {
+    background: var(--bg); border: 1px solid var(--border); color: var(--text);
+    padding: 4px 10px; border-radius: 6px; font-size: 12px; width: 160px;
+  }
+  #header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  #last-updated { color: var(--muted); font-size: 11px; }
+  .view-btn {
+    padding: 3px 10px; border-radius: 6px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer; font-size: 11px;
+  }
+  .view-btn.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+  #export-btn {
+    padding: 3px 10px; border-radius: 6px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer; font-size: 11px;
+  }
+  #export-btn:hover { background: var(--border); color: var(--text); }
+
+  /* SUMMARY BAR */
+  #summary {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 6px 16px; display: flex; gap: 20px; font-size: 12px; color: var(--muted);
+  }
+  .sum-item span { font-weight: 700; color: var(--text); }
+
+  /* MAIN */
+  #main { padding: 16px; }
+
+  /* LIST VIEW */
+  #list-view table { width: 100%; border-collapse: collapse; }
+  #list-view th {
+    background: var(--surface); border-bottom: 2px solid var(--border);
+    padding: 7px 10px; text-align: left; font-size: 11px; color: var(--muted);
+    cursor: pointer; white-space: nowrap; user-select: none;
+  }
+  #list-view th:hover { color: var(--text); }
+  #list-view th.sort-asc::after  { content: ' ▲'; }
+  #list-view th.sort-desc::after { content: ' ▼'; }
+  #list-view td {
+    padding: 7px 10px; border-bottom: 1px solid var(--border);
+    vertical-align: top; max-width: 260px;
+  }
+  #list-view tr.high-row { background: var(--high-bg); }
+  #list-view tr:hover { background: #1e2d44; }
+  #list-view tr.expanded-row td { padding-bottom: 0; }
+  .detail-row td {
+    background: #131e30; padding: 10px 14px;
+    font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--border);
+  }
+  .detail-row td pre { white-space: pre-wrap; word-break: break-word; font-size: 11px; color: #94a3b8; }
+  .badge {
+    display: inline-block; padding: 2px 7px; border-radius: 10px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.3px;
+  }
+  .badge-HIGH   { background: #7f1d1d; color: #fca5a5; }
+  .badge-MED    { background: #78350f; color: #fcd34d; }
+  .badge-LOW    { background: #1e3a5f; color: #93c5fd; }
+  .badge-new    { background: #064e3b; color: #6ee7b7; }
+  .badge-active { background: #1e3a5f; color: #93c5fd; }
+  .badge-upcoming { background: #312e81; color: #c4b5fd; }
+  .badge-expired { background: #374151; color: #9ca3af; }
+  .pipe-badge {
+    display: inline-block; padding: 2px 7px; border-radius: 10px;
+    font-size: 10px; font-weight: 700; color: #fff;
+  }
+  .pipe-TETCO  { background: var(--pipes-tetco); }
+  .pipe-CGT    { background: var(--pipes-cgt); }
+  .pipe-TGP    { background: var(--pipes-tgp); }
+  .pipe-TRANSCO { background: var(--pipes-transco); }
+  .pipe-PEPL   { background: var(--pipes-pepl); }
+  .pipe-TGC    { background: var(--pipes-tgc); }
+  .pipe-EGTS   { background: var(--pipes-egts); }
+  .pipe-GSPL   { background: var(--pipes-gspl); }
+  .pipe-TXGT   { background: var(--pipes-txgt); }
+  .ebb-link { color: #60a5fa; text-decoration: none; font-size: 11px; }
+  .ebb-link:hover { text-decoration: underline; }
+  .loc-list { color: var(--muted); font-size: 11px; }
+  .capacity { font-family: monospace; font-size: 12px; color: #a3e635; }
+
+  /* Pagination */
+  #pagination { display: flex; align-items: center; gap: 8px; padding: 12px 16px; justify-content: flex-end; }
+  .pg-btn {
+    padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer;
+  }
+  .pg-btn.active, .pg-btn:hover { background: var(--border); color: var(--text); }
+  #page-info { color: var(--muted); font-size: 12px; }
+  #page-size { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 3px 6px; border-radius: 4px; }
+
+  /* BY POINT VIEW */
+  #point-view { display: none; }
+  #point-search { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; font-size: 12px; width: 280px; margin-bottom: 12px; }
+  .point-group { margin-bottom: 8px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .point-header {
+    display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+    background: var(--surface); cursor: pointer; user-select: none;
+  }
+  .point-header:hover { background: #1e2d44; }
+  .chevron { font-size: 10px; transition: transform 0.2s; }
+  .point-group.open .chevron { transform: rotate(90deg); }
+  .point-name { flex: 1; font-weight: 600; }
+  .point-stats { color: var(--muted); font-size: 11px; }
+  .point-body { display: none; }
+  .point-group.open .point-body { display: block; }
+  .point-body table { width: 100%; border-collapse: collapse; }
+  .point-body td { padding: 6px 12px; border-top: 1px solid var(--border); font-size: 12px; }
+
+  /* CALENDAR VIEW */
+  #calendar-view { display: none; }
+  .cal-nav { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .cal-nav button { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 4px 12px; border-radius: 6px; cursor: pointer; }
+  #cal-label { font-weight: 700; font-size: 15px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-day-header { text-align: center; color: var(--muted); font-size: 11px; padding: 4px; }
+  .cal-day {
+    min-height: 80px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 4px; padding: 4px; cursor: pointer; transition: background 0.1s;
+  }
+  .cal-day:hover { background: #1e2d44; }
+  .cal-day.other-month { opacity: 0.4; }
+  .cal-day.today { border-color: #2563eb; }
+  .cal-day-num { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+  .cal-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin: 1px; }
+  .cal-day-notices { display: none; margin-top: 10px; padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; }
+
+  /* Error / Loading */
+  #error-bar { display: none; background: #7f1d1d; color: #fca5a5; padding: 8px 16px; font-size: 12px; }
+  #loading { text-align: center; padding: 40px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div id="error-bar"></div>
+
+<div id="header">
+  <div id="wordmark">⚡ Pipeline Notices</div>
+  <div id="filters">
+    <div class="pill-group" id="pipe-pills"></div>
+    <div class="pill-group" id="status-pills">
+      <button class="pill" data-status="new">New</button>
+      <button class="pill" data-status="active">Active</button>
+      <button class="pill" data-status="upcoming">Upcoming</button>
+      <button class="pill" data-status="expired">Expired</button>
+    </div>
+    <div class="pill-group" id="sev-pills">
+      <button class="pill" data-sev="HIGH">HIGH</button>
+      <button class="pill" data-sev="MED">MED</button>
+      <button class="pill" data-sev="LOW">LOW</button>
+    </div>
+    <input id="search" type="text" placeholder="Search notices…">
+  </div>
+  <div id="header-right">
+    <span id="last-updated"></span>
+    <button class="view-btn active" onclick="setView('list')">List</button>
+    <button class="view-btn" onclick="setView('point')">By Point</button>
+    <button class="view-btn" onclick="setView('calendar')">Calendar</button>
+    <a href="theme_cards.html"><button class="view-btn">Cards ↗</button></a>
+    <button id="export-btn" onclick="exportCSV()">CSV</button>
+  </div>
+</div>
+
+<div id="summary">
+  <div class="sum-item">Total <span id="sum-total">0</span></div>
+  <div class="sum-item">🔴 HIGH <span id="sum-high">0</span></div>
+  <div class="sum-item">Active <span id="sum-active">0</span></div>
+  <div class="sum-item">Upcoming <span id="sum-upcoming">0</span></div>
+</div>
+
+<div id="main">
+  <div id="loading">Loading pipeline data…</div>
+
+  <!-- LIST VIEW -->
+  <div id="list-view" style="display:none">
+    <table id="notice-table">
+      <thead>
+        <tr>
+          <th data-col="severity">Sev</th>
+          <th data-col="status">Status</th>
+          <th data-col="pipe">Pipeline</th>
+          <th data-col="type">Type</th>
+          <th data-col="title">Title</th>
+          <th data-col="available_cap">Capacity</th>
+          <th data-col="locations">Locations</th>
+          <th data-col="start">Start</th>
+          <th data-col="end">End</th>
+          <th data-col="posted_at">Posted</th>
+        </tr>
+      </thead>
+      <tbody id="notice-tbody"></tbody>
+    </table>
+    <div id="pagination">
+      <label>Show <select id="page-size" onchange="setPageSize(this.value)">
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select></label>
+      <button class="pg-btn" onclick="prevPage()">← Prev</button>
+      <span id="page-info"></span>
+      <button class="pg-btn" onclick="nextPage()">Next →</button>
+    </div>
+  </div>
+
+  <!-- BY POINT VIEW -->
+  <div id="point-view">
+    <input id="point-search" type="text" placeholder="Filter by location…" oninput="filterPoints(this.value)">
+    <div id="point-groups"></div>
+  </div>
+
+  <!-- CALENDAR VIEW -->
+  <div id="calendar-view">
+    <div class="cal-nav">
+      <button onclick="calPrev()">‹</button>
+      <span id="cal-label"></span>
+      <button onclick="calNext()">›</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-day-notices" id="cal-day-notices"></div>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let allEvents = [];
+let filtered = [];
+let currentView = 'list';
+let sortCol = 'severity';
+let sortDir = 1;
+let page = 0;
+let pageSize = 25;
+let activeFilters = { pipes: new Set(), statuses: new Set(), sevs: new Set() };
+let searchQuery = '';
+let calDate = new Date();
+
+const PIPE_COLORS = {
+  TETCO:'#f97316',CGT:'#ef4444',TGP:'#3b82f6',TRANSCO:'#22c55e',
+  PEPL:'#a855f7',TGC:'#14b8a6',EGTS:'#6366f1',GSPL:'#f59e0b',TXGT:'#ec4899'
+};
+
+// ── Load data ──────────────────────────────────────────────────────────────
+async function load() {
+  try {
+    const r = await fetch('../data/events.json?t=' + Date.now());
+    if (!r.ok) throw new Error(r.status);
+    allEvents = await r.json();
+    document.getElementById('loading').style.display = 'none';
+    buildPipePills();
+    applyFilters();
+    updateSummary();
+    loadStatus();
+  } catch(e) {
+    document.getElementById('loading').textContent = 'Error loading data: ' + e.message;
+    showError('Could not load events.json: ' + e.message);
+  }
+}
+
+async function loadStatus() {
+  try {
+    const r = await fetch('../data/status.json?t=' + Date.now());
+    if (!r.ok) return;
+    const s = await r.json();
+    const d = new Date(s.last_run);
+    document.getElementById('last-updated').textContent =
+      'Updated ' + fmtRelTime(d);
+  } catch(e) {}
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function status(ev) {
+  const now = Date.now();
+  const posted = ev.posted_at ? new Date(ev.posted_at).getTime() : null;
+  const start  = ev.start     ? new Date(ev.start).getTime()     : null;
+  const end    = ev.end       ? new Date(ev.end).getTime()       : null;
+  const isNew  = posted && (now - posted) < 86400000;
+  if (end && end < now - 7200000)   return 'expired';
+  if (start && start > now)          return isNew ? 'new' : 'upcoming';
+  return isNew ? 'new' : 'active';
+}
+
+function sev(ev) {
+  const t = (ev.title||'') + ' ' + (ev.flow_detail||'');
+  const HIGH = /\b(ofo|operational\s+flow\s+order|force\s+majeure|FM|emergency|curtail|overpressur|imbalance|maop|capacity\s+constraint|operational\s+alert|no[\s-]notice)\b/i;
+  const MED  = /\b(maintenance|construction|compressor|constraint|underperform|off[\s-]*rate|restriction|reduced)\b/i;
+  if (ev.critical === true || HIGH.test(t)) return 'HIGH';
+  if (MED.test(t)) return 'MED';
+  return 'LOW';
+}
+
+function normLoc(s) {
+  if (!s) return s;
+  s = s.replace(/^(segment|seg\.|zone|lateral|lat\.|meter|mtr\.|delivery\s+point|receipt\s+point|station|point|location\s+id|loc\s+id|location|loc\.)\s*/i,'');
+  s = s.replace(/\([A-Za-z0-9]{3,10}\)/g,'');
+  return s.trim().replace(/^[.,;:\-]+|[.,;:\-]+$/g,'').trim();
+}
+
+function cleanTitle(ev) {
+  let t = ev.title || '';
+  t = t.replace(/^Subject:\s*/i,'').replace(/^Location:\s*/i,'');
+  if (ev.source === 'maint_schedule' || ev.source === 'pdf_outage' || ev.source === 'cgt_maint_timeline') {
+    const idx = t.indexOf(': ');
+    if (idx > 0) t = t.slice(idx+2);
+  }
+  t = t.replace(/\([A-Za-z0-9]{3,10}\)/g,'').trim();
+  return t || ev.title || 'Untitled';
+}
+
+function noticeType(ev) {
+  if (ev.source === 'maint_schedule' || ev.source === 'cgt_maint_timeline') return 'Maintenance Schedule';
+  if (ev.source === 'pdf_outage') return 'PDF Outage';
+  if (ev.critical === true)  return 'Critical Notice';
+  if (ev.critical === false) return 'Non-Critical Notice';
+  return 'Notice';
+}
+
+function fmtDate(s) {
+  if (!s) return '—';
+  try {
+    const d = new Date(s);
+    return d.toLocaleString('en-US', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'});
+  } catch(e) { return s; }
+}
+
+function fmtRelTime(d) {
+  const diff = Date.now() - d.getTime();
+  if (diff < 60000) return 'just now';
+  if (diff < 3600000) return Math.round(diff/60000) + 'm ago';
+  if (diff < 86400000) return Math.round(diff/3600000) + 'h ago';
+  return d.toLocaleDateString();
+}
+
+function showError(msg) {
+  const bar = document.getElementById('error-bar');
+  bar.textContent = '⚠ ' + msg;
+  bar.style.display = 'block';
+}
+
+// ── Pills ──────────────────────────────────────────────────────────────────
+function buildPipePills() {
+  const pipes = [...new Set(allEvents.map(e => e.pipe).filter(Boolean))].sort();
+  const container = document.getElementById('pipe-pills');
+  container.innerHTML = '';
+  pipes.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'pill';
+    btn.setAttribute('data-pipe', p);
+    btn.textContent = p;
+    btn.onclick = () => toggleFilter('pipes', p, btn);
+    container.appendChild(btn);
+  });
+  document.querySelectorAll('#status-pills .pill').forEach(btn => {
+    btn.onclick = () => toggleFilter('statuses', btn.dataset.status, btn);
+  });
+  document.querySelectorAll('#sev-pills .pill').forEach(btn => {
+    btn.onclick = () => toggleFilter('sevs', btn.dataset.sev, btn);
+  });
+  document.getElementById('search').oninput = e => {
+    searchQuery = e.target.value.toLowerCase();
+    page = 0;
+    applyFilters();
+  };
+}
+
+function toggleFilter(group, val, btn) {
+  if (activeFilters[group].has(val)) {
+    activeFilters[group].delete(val);
+    btn.classList.remove('active');
+  } else {
+    activeFilters[group].add(val);
+    btn.classList.add('active');
+  }
+  page = 0;
+  applyFilters();
+  updateSummary();
+}
+
+// ── Filter & render ────────────────────────────────────────────────────────
+function applyFilters() {
+  filtered = allEvents.filter(ev => {
+    const s = status(ev);
+    const sv = sev(ev);
+    if (activeFilters.pipes.size && !activeFilters.pipes.has(ev.pipe)) return false;
+    if (activeFilters.statuses.size && !activeFilters.statuses.has(s)) return false;
+    if (activeFilters.sevs.size && !activeFilters.sevs.has(sv)) return false;
+    if (searchQuery) {
+      const haystack = [ev.title, ev.pipe, ev.company, (ev.locations||[]).join(' '), ev.flow_detail].join(' ').toLowerCase();
+      if (!haystack.includes(searchQuery)) return false;
+    }
+    return true;
+  });
+  if (currentView === 'list') renderList();
+  else if (currentView === 'point') renderPoints();
+  else renderCalendar();
+  updateSummary();
+}
+
+// ── List view ──────────────────────────────────────────────────────────────
+function setView(v) {
+  currentView = v;
+  document.getElementById('list-view').style.display     = v === 'list'     ? 'block' : 'none';
+  document.getElementById('point-view').style.display    = v === 'point'    ? 'block' : 'none';
+  document.getElementById('calendar-view').style.display = v === 'calendar' ? 'block' : 'none';
+  document.querySelectorAll('.view-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['list','point','calendar'][i] === v);
+  });
+  applyFilters();
+}
+
+function sortBy(col) {
+  if (sortCol === col) sortDir = -sortDir;
+  else { sortCol = col; sortDir = 1; }
+  document.querySelectorAll('#notice-table th').forEach(th => {
+    th.classList.remove('sort-asc','sort-desc');
+    if (th.dataset.col === col) th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
+  });
+  renderList();
+}
+
+document.querySelectorAll('#notice-table th').forEach(th => {
+  if (th.dataset.col) th.onclick = () => sortBy(th.dataset.col);
+});
+
+const SEV_ORD = { HIGH:0, MED:1, LOW:2 };
+
+function renderList() {
+  const sorted = [...filtered].sort((a,b) => {
+    let av, bv;
+    if (sortCol === 'severity') { av = SEV_ORD[sev(a)]??2; bv = SEV_ORD[sev(b)]??2; }
+    else if (sortCol === 'status') { av = status(a); bv = status(b); }
+    else { av = (a[sortCol]||'').toString(); bv = (b[sortCol]||'').toString(); }
+    if (av < bv) return -sortDir;
+    if (av > bv) return sortDir;
+    return 0;
+  });
+
+  const total = sorted.length;
+  const start = page * pageSize;
+  const end   = Math.min(start + pageSize, total);
+  const slice = sorted.slice(start, end);
+
+  const tbody = document.getElementById('notice-tbody');
+  tbody.innerHTML = '';
+
+  slice.forEach((ev, i) => {
+    const sv = sev(ev);
+    const st = status(ev);
+    const locs = (ev.locations||[]).map(normLoc).filter(Boolean).slice(0,3).join(', ');
+    const tr = document.createElement('tr');
+    if (sv === 'HIGH') tr.classList.add('high-row');
+    tr.innerHTML = `
+      <td><span class="badge badge-${sv}">${sv}</span></td>
+      <td><span class="badge badge-${st}">${st}</span></td>
+      <td><span class="pipe-badge pipe-${ev.pipe}">${ev.pipe||'?'}</span></td>
+      <td style="color:var(--muted);font-size:11px">${noticeType(ev)}</td>
+      <td style="max-width:260px">${esc(cleanTitle(ev).slice(0,120))}</td>
+      <td class="capacity">${ev.available_cap ? fmtCap(ev.available_cap) : '—'}</td>
+      <td class="loc-list">${esc(locs) || '—'}</td>
+      <td style="white-space:nowrap;font-size:11px">${fmtDate(ev.start)}</td>
+      <td style="white-space:nowrap;font-size:11px">${fmtDate(ev.end)}</td>
+      <td style="white-space:nowrap;font-size:11px">${fmtDate(ev.posted_at)}</td>
+    `;
+    tr.style.cursor = 'pointer';
+    tr.onclick = () => toggleDetail(tr, ev, sorted, i + start);
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('page-info').textContent =
+    total ? `${start+1}–${end} of ${total}` : 'No results';
+}
+
+function toggleDetail(tr, ev, sorted, globalIdx) {
+  const existing = tr.nextSibling;
+  if (existing && existing.classList.contains('detail-row')) {
+    existing.remove(); tr.classList.remove('expanded-row'); return;
+  }
+  // Remove other expanded
+  document.querySelectorAll('.detail-row').forEach(r => r.remove());
+  document.querySelectorAll('.expanded-row').forEach(r => r.classList.remove('expanded-row'));
+
+  tr.classList.add('expanded-row');
+  const dr = document.createElement('tr');
+  dr.className = 'detail-row';
+  const locs = (ev.locations||[]).map(normLoc).filter(Boolean).join('\n  ');
+  dr.innerHTML = `<td colspan="10">
+    <strong>Notice #${esc(ev.notice_id)}</strong>
+    ${ev.ebb_url ? `<a class="ebb-link" href="${esc(ev.ebb_url)}" target="_blank" rel="noopener"> ↗ View on EBB</a>` : ''}
+    <br><br>
+    ${ev.flow_detail ? `<pre>${esc(ev.flow_detail.slice(0,800))}</pre>` : ''}
+    ${locs ? `<div style="margin-top:6px"><strong>Locations:</strong><br><pre>  ${esc(locs)}</pre></div>` : ''}
+  </td>`;
+  tr.parentNode.insertBefore(dr, tr.nextSibling);
+}
+
+function fmtCap(c) {
+  if (!c) return '';
+  const n = parseInt(c.toString().replace(/,/g,''));
+  if (isNaN(n)) return c;
+  return n.toLocaleString() + ' dth';
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function prevPage() { if (page > 0) { page--; renderList(); } }
+function nextPage() {
+  const maxPage = Math.ceil(filtered.length / pageSize) - 1;
+  if (page < maxPage) { page++; renderList(); }
+}
+function setPageSize(n) { pageSize = parseInt(n); page = 0; renderList(); }
+
+// ── By Point view ──────────────────────────────────────────────────────────
+function renderPoints() {
+  const groups = {};
+  filtered.forEach(ev => {
+    const locs = (ev.locations||[]).map(normLoc).filter(Boolean);
+    const keys = locs.length ? locs : ['(Unclassified)'];
+    keys.forEach(loc => {
+      if (!groups[loc]) groups[loc] = [];
+      groups[loc].push(ev);
+    });
+  });
+
+  const sortedKeys = Object.keys(groups).sort((a,b) => {
+    const aHigh = groups[a].some(e => sev(e) === 'HIGH');
+    const bHigh = groups[b].some(e => sev(e) === 'HIGH');
+    if (aHigh && !bHigh) return -1;
+    if (!aHigh && bHigh) return 1;
+    return groups[b].length - groups[a].length;
+  });
+
+  const container = document.getElementById('point-groups');
+  container.innerHTML = '';
+
+  sortedKeys.forEach(loc => {
+    const evs = groups[loc];
+    const hasHigh = evs.some(e => sev(e) === 'HIGH');
+    const pipes = [...new Set(evs.map(e => e.pipe).filter(Boolean))];
+    const activeCount = evs.filter(e => status(e) === 'active' || status(e) === 'new').length;
+
+    const group = document.createElement('div');
+    group.className = 'point-group' + (hasHigh ? ' open' : '');
+    group.dataset.loc = loc.toLowerCase();
+
+    const pipeBadges = pipes.map(p =>
+      `<span class="pipe-badge pipe-${p}" style="font-size:9px;padding:1px 5px">${p}</span>`
+    ).join(' ');
+
+    group.innerHTML = `
+      <div class="point-header" onclick="this.parentElement.classList.toggle('open')">
+        <span class="chevron">▶</span>
+        <span class="point-name">${esc(loc)}</span>
+        ${pipeBadges}
+        ${hasHigh ? '<span class="badge badge-HIGH" style="font-size:9px">HIGH</span>' : ''}
+        <span class="point-stats">${activeCount} active · ${evs.length} total</span>
+      </div>
+      <div class="point-body">
+        <table>
+          ${evs.sort((a,b) => (SEV_ORD[sev(a)]??2)-(SEV_ORD[sev(b)]??2)).map(ev => `
+          <tr class="${sev(ev)==='HIGH'?'high-row':''}">
+            <td style="width:60px"><span class="badge badge-${sev(ev)}">${sev(ev)}</span></td>
+            <td style="width:80px"><span class="badge badge-${status(ev)}">${status(ev)}</span></td>
+            <td style="width:80px"><span class="pipe-badge pipe-${ev.pipe}">${ev.pipe}</span></td>
+            <td>${esc(cleanTitle(ev).slice(0,100))}</td>
+            <td style="white-space:nowrap">${fmtDate(ev.start)}</td>
+            <td style="white-space:nowrap">${fmtDate(ev.end)}</td>
+            <td>${ev.ebb_url ? `<a class="ebb-link" href="${esc(ev.ebb_url)}" target="_blank">EBB ↗</a>` : ''}</td>
+          </tr>`).join('')}
+        </table>
+      </div>
+    `;
+    container.appendChild(group);
+  });
+}
+
+function filterPoints(q) {
+  const ql = q.toLowerCase();
+  document.querySelectorAll('.point-group').forEach(g => {
+    g.style.display = (!ql || g.dataset.loc.includes(ql)) ? '' : 'none';
+  });
+}
+
+// ── Calendar view ──────────────────────────────────────────────────────────
+function renderCalendar() {
+  const y = calDate.getFullYear(), m = calDate.getMonth();
+  document.getElementById('cal-label').textContent =
+    new Date(y, m).toLocaleString('en-US', {month:'long', year:'numeric'});
+
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const today = new Date();
+
+  // Build day→events map
+  const dayMap = {};
+  filtered.forEach(ev => {
+    const dates = [];
+    if (ev.start) dates.push(new Date(ev.start));
+    if (ev.end)   dates.push(new Date(ev.end));
+    dates.forEach(d => {
+      if (d.getFullYear()===y && d.getMonth()===m) {
+        const key = d.getDate();
+        if (!dayMap[key]) dayMap[key] = [];
+        if (!dayMap[key].includes(ev)) dayMap[key].push(ev);
+      }
+    });
+  });
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+    .map(d => `<div class="cal-day-header">${d}</div>`).join('');
+
+  for (let i = 0; i < firstDay; i++) grid.innerHTML += '<div></div>';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const evs = dayMap[d] || [];
+    const isToday = today.getFullYear()===y && today.getMonth()===m && today.getDate()===d;
+    const dots = evs.slice(0,6).map(ev => {
+      const c = PIPE_COLORS[ev.pipe] || '#64748b';
+      return `<span class="cal-dot" style="background:${c}" title="${esc(ev.pipe)}"></span>`;
+    }).join('');
+    grid.innerHTML += `
+      <div class="cal-day${isToday?' today':''}" onclick="showCalDay(${d}, ${y}, ${m})">
+        <div class="cal-day-num">${d}</div>
+        ${dots}
+      </div>`;
+  }
+}
+
+function showCalDay(d, y, m) {
+  const evs = filtered.filter(ev => {
+    const dates = [];
+    if (ev.start) dates.push(new Date(ev.start));
+    if (ev.end)   dates.push(new Date(ev.end));
+    return dates.some(dt => dt.getFullYear()===y && dt.getMonth()===m && dt.getDate()===d);
+  });
+  const panel = document.getElementById('cal-day-notices');
+  panel.style.display = 'block';
+  panel.innerHTML = `<strong>${new Date(y,m,d).toDateString()}</strong> — ${evs.length} notice(s)<br><br>` +
+    evs.map(ev => `
+      <div style="margin-bottom:8px">
+        <span class="badge badge-${sev(ev)}">${sev(ev)}</span>
+        <span class="pipe-badge pipe-${ev.pipe}">${ev.pipe}</span>
+        ${esc(cleanTitle(ev).slice(0,100))}
+        ${ev.ebb_url ? `<a class="ebb-link" href="${esc(ev.ebb_url)}" target="_blank"> ↗</a>` : ''}
+      </div>`).join('');
+}
+
+function calPrev() { calDate.setMonth(calDate.getMonth()-1); renderCalendar(); }
+function calNext() { calDate.setMonth(calDate.getMonth()+1); renderCalendar(); }
+
+// ── Summary ────────────────────────────────────────────────────────────────
+function updateSummary() {
+  document.getElementById('sum-total').textContent    = filtered.length;
+  document.getElementById('sum-high').textContent     = filtered.filter(e => sev(e)==='HIGH').length;
+  document.getElementById('sum-active').textContent   = filtered.filter(e => ['active','new'].includes(status(e))).length;
+  document.getElementById('sum-upcoming').textContent = filtered.filter(e => status(e)==='upcoming').length;
+}
+
+// ── CSV Export ─────────────────────────────────────────────────────────────
+function exportCSV() {
+  const rows = [['ID','Pipeline','Severity','Status','Type','Title','Capacity','Locations','Start','End','Posted','EBB']];
+  filtered.forEach(ev => {
+    rows.push([
+      ev.notice_id, ev.pipe, sev(ev), status(ev), noticeType(ev),
+      cleanTitle(ev), ev.available_cap||'',
+      (ev.locations||[]).join('; '),
+      ev.start||'', ev.end||'', ev.posted_at||'', ev.ebb_url||''
+    ]);
+  });
+  const csv = rows.map(r => r.map(c => '"' + String(c||'').replace(/"/g,'""') + '"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'pipeline-notices.csv';
+  a.click();
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+load();
+setInterval(load, 300000); // refresh every 5 minutes
+</script>
+</body>
+</html>

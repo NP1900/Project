@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Notices — Cards View</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #161b27;
+    --surface2: #1e2538;
+    --border: #2a3550;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --high: #ef4444;
+    --high-bg: #1f0a0a;
+    --med: #f59e0b;
+    --low: #3b82f6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; }
+
+  /* HEADER */
+  #header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 8px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  #wordmark { font-size: 15px; font-weight: 700; color: #60a5fa; white-space: nowrap; flex-shrink: 0; }
+  .pill-group { display: flex; gap: 3px; flex-wrap: wrap; }
+  .pill {
+    padding: 3px 10px; border-radius: 12px; border: 1px solid var(--border);
+    cursor: pointer; font-size: 11px; font-weight: 600; background: transparent; color: var(--muted);
+  }
+  .pill.active { color: #fff; background: #374151; border-color: #6b7280; }
+  .pill[data-pipe="TETCO"].active { background:#f97316; border-color:#f97316; }
+  .pill[data-pipe="CGT"].active   { background:#ef4444; border-color:#ef4444; }
+  .pill[data-pipe="TGP"].active   { background:#3b82f6; border-color:#3b82f6; }
+  .pill[data-pipe="TRANSCO"].active { background:#22c55e; border-color:#22c55e; }
+  .pill[data-pipe="PEPL"].active  { background:#a855f7; border-color:#a855f7; }
+  .pill[data-pipe="TGC"].active   { background:#14b8a6; border-color:#14b8a6; }
+  .pill[data-pipe="EGTS"].active  { background:#6366f1; border-color:#6366f1; }
+  .pill[data-pipe="GSPL"].active  { background:#f59e0b; border-color:#f59e0b; }
+  .pill[data-pipe="TXGT"].active  { background:#ec4899; border-color:#ec4899; }
+  .pill[data-sev="HIGH"].active   { background:#ef4444; border-color:#ef4444; }
+  .pill[data-sev="MED"].active    { background:#f59e0b; border-color:#f59e0b; }
+  .pill[data-sev="LOW"].active    { background:#3b82f6; border-color:#3b82f6; }
+  #search { background:var(--bg); border:1px solid var(--border); color:var(--text); padding:4px 10px; border-radius:6px; font-size:12px; width:150px; }
+  #header-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+  .view-toggle-btn { padding:3px 10px; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; font-size:11px; }
+  .view-toggle-btn.active { background:#2563eb; border-color:#2563eb; color:#fff; }
+
+  /* SUMMARY */
+  #summary { background:var(--surface); border-bottom:1px solid var(--border); padding:6px 16px; display:flex; gap:20px; font-size:12px; color:var(--muted); }
+  .sum-item span { font-weight:700; color:var(--text); }
+
+  /* CARDS GRID */
+  #main { padding: 16px; }
+  #card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 12px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden; display: flex; flex-direction: column;
+    border-left: 4px solid transparent; transition: box-shadow 0.15s;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+  .card.high { border-left-color: #ef4444; background: var(--high-bg); }
+  .card.med  { border-left-color: #f59e0b; }
+  .card.low  { border-left-color: transparent; }
+
+  .card-header {
+    display: flex; align-items: center; gap: 6px; padding: 10px 12px 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-body { padding: 10px 12px; flex: 1; }
+  .card-footer { padding: 6px 12px 10px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+
+  .badge { display:inline-block; padding:2px 7px; border-radius:10px; font-size:10px; font-weight:700; }
+  .badge-HIGH     { background:#7f1d1d; color:#fca5a5; }
+  .badge-MED      { background:#78350f; color:#fcd34d; }
+  .badge-LOW      { background:#1e3a5f; color:#93c5fd; }
+  .badge-new      { background:#064e3b; color:#6ee7b7; }
+  .badge-active   { background:#1e3a5f; color:#93c5fd; }
+  .badge-upcoming { background:#312e81; color:#c4b5fd; }
+  .badge-expired  { background:#374151; color:#9ca3af; }
+  .pipe-badge { display:inline-block; padding:2px 7px; border-radius:10px; font-size:10px; font-weight:700; color:#fff; }
+  .pipe-TETCO  { background:#f97316; }
+  .pipe-CGT    { background:#ef4444; }
+  .pipe-TGP    { background:#3b82f6; }
+  .pipe-TRANSCO { background:#22c55e; }
+  .pipe-PEPL   { background:#a855f7; }
+  .pipe-TGC    { background:#14b8a6; }
+  .pipe-EGTS   { background:#6366f1; }
+  .pipe-GSPL   { background:#f59e0b; }
+  .pipe-TXGT   { background:#ec4899; }
+
+  .notice-id { color:var(--muted); font-size:10px; margin-left:auto; }
+  .cap-block { background:#0f1724; border-radius:4px; padding:4px 8px; font-family:monospace; font-size:12px; color:#a3e635; margin-bottom:8px; display:inline-block; }
+  .card-title { font-size:13px; font-weight:600; margin-bottom:6px; line-height:1.4; }
+  .card-locs { color:var(--muted); font-size:11px; margin-bottom:6px; }
+  .card-type { color:var(--muted); font-size:11px; }
+  .ebb-link { color:#60a5fa; text-decoration:none; font-size:11px; }
+  .ebb-link:hover { text-decoration:underline; }
+
+  /* BY POINT grouped cards */
+  #point-groups { display:none; }
+  .point-section { margin-bottom:16px; }
+  .point-section-header {
+    display:flex; align-items:center; gap:8px; padding:8px 12px;
+    background:var(--surface2); border:1px solid var(--border); border-radius:8px 8px 0 0;
+    cursor:pointer; user-select:none;
+  }
+  .point-section-header:hover { background:#1e2d44; }
+  .chevron { font-size:10px; transition:transform 0.2s; }
+  .point-section.open .chevron { transform:rotate(90deg); }
+  .point-section-body { display:none; border:1px solid var(--border); border-top:0; border-radius:0 0 8px 8px; padding:12px; }
+  .point-section.open .point-section-body { display:block; }
+  .point-section-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:10px; }
+  #point-search { background:var(--bg); border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:6px; font-size:12px; width:260px; margin-bottom:12px; }
+
+  #loading { text-align:center; padding:40px; color:var(--muted); }
+  #last-updated { color:var(--muted); font-size:11px; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div id="wordmark">⚡ Pipeline Notices</div>
+  <div class="pill-group" id="pipe-pills"></div>
+  <div class="pill-group" id="sev-pills">
+    <button class="pill" data-sev="HIGH">HIGH</button>
+    <button class="pill" data-sev="MED">MED</button>
+    <button class="pill" data-sev="LOW">LOW</button>
+  </div>
+  <div class="pill-group" id="status-pills">
+    <button class="pill" data-status="new">New</button>
+    <button class="pill" data-status="active">Active</button>
+    <button class="pill" data-status="upcoming">Upcoming</button>
+  </div>
+  <input id="search" type="text" placeholder="Search…">
+  <div id="header-right">
+    <span id="last-updated"></span>
+    <button class="view-toggle-btn active" id="btn-flat" onclick="setCardView('flat')">Grid</button>
+    <button class="view-toggle-btn" id="btn-point" onclick="setCardView('point')">By Point</button>
+    <a href="index.html"><button class="view-toggle-btn">List ↗</button></a>
+  </div>
+</div>
+
+<div id="summary">
+  <div class="sum-item">Total <span id="sum-total">0</span></div>
+  <div class="sum-item">🔴 HIGH <span id="sum-high">0</span></div>
+  <div class="sum-item">Active <span id="sum-active">0</span></div>
+  <div class="sum-item">Upcoming <span id="sum-upcoming">0</span></div>
+</div>
+
+<div id="main">
+  <div id="loading">Loading pipeline data…</div>
+  <div id="card-grid"></div>
+  <div id="point-groups">
+    <input id="point-search" type="text" placeholder="Filter by location…" oninput="filterPointSections(this.value)">
+    <div id="point-sections"></div>
+  </div>
+</div>
+
+<script>
+let allEvents = [];
+let filtered = [];
+let cardView = 'flat';
+let activeFilters = { pipes: new Set(), statuses: new Set(), sevs: new Set() };
+let searchQuery = '';
+
+async function load() {
+  try {
+    const r = await fetch('../data/events.json?t=' + Date.now());
+    if (!r.ok) throw new Error(r.status);
+    allEvents = await r.json();
+    document.getElementById('loading').style.display = 'none';
+    buildPills();
+    applyFilters();
+    loadStatus();
+  } catch(e) {
+    document.getElementById('loading').textContent = 'Error: ' + e.message;
+  }
+}
+
+async function loadStatus() {
+  try {
+    const r = await fetch('../data/status.json?t=' + Date.now());
+    if (!r.ok) return;
+    const s = await r.json();
+    const d = new Date(s.last_run);
+    document.getElementById('last-updated').textContent = 'Updated ' + fmtRel(d);
+  } catch(e) {}
+}
+
+function status(ev) {
+  const now = Date.now();
+  const posted = ev.posted_at ? new Date(ev.posted_at).getTime() : null;
+  const start  = ev.start     ? new Date(ev.start).getTime()     : null;
+  const end    = ev.end       ? new Date(ev.end).getTime()       : null;
+  const isNew  = posted && (now - posted) < 86400000;
+  if (end && end < now - 7200000)   return 'expired';
+  if (start && start > now)          return isNew ? 'new' : 'upcoming';
+  return isNew ? 'new' : 'active';
+}
+
+function sev(ev) {
+  const t = (ev.title||'') + ' ' + (ev.flow_detail||'');
+  const HIGH = /\b(ofo|operational\s+flow\s+order|force\s+majeure|FM|emergency|curtail|overpressur|imbalance|maop|capacity\s+constraint|operational\s+alert|no[\s-]notice)\b/i;
+  const MED  = /\b(maintenance|construction|compressor|constraint|underperform|off[\s-]*rate|restriction|reduced)\b/i;
+  if (ev.critical === true || HIGH.test(t)) return 'HIGH';
+  if (MED.test(t)) return 'MED';
+  return 'LOW';
+}
+
+function normLoc(s) {
+  if (!s) return s;
+  s = s.replace(/^(segment|seg\.|zone|lateral|lat\.|meter|mtr\.|delivery\s+point|receipt\s+point|station|point|location\s+id|loc\s+id|location|loc\.)\s*/i,'');
+  s = s.replace(/\([A-Za-z0-9]{3,10}\)/g,'');
+  return s.trim().replace(/^[.,;:\-]+|[.,;:\-]+$/g,'').trim();
+}
+
+function cleanTitle(ev) {
+  let t = ev.title || '';
+  t = t.replace(/^Subject:\s*/i,'').replace(/^Location:\s*/i,'');
+  if (['maint_schedule','pdf_outage','cgt_maint_timeline'].includes(ev.source)) {
+    const idx = t.indexOf(': ');
+    if (idx > 0) t = t.slice(idx+2);
+  }
+  return t.replace(/\([A-Za-z0-9]{3,10}\)/g,'').trim() || ev.title || 'Untitled';
+}
+
+function noticeType(ev) {
+  if (ev.source === 'maint_schedule' || ev.source === 'cgt_maint_timeline') return 'Maintenance Schedule';
+  if (ev.source === 'pdf_outage') return 'PDF Outage';
+  if (ev.critical === true)  return 'Critical Notice';
+  if (ev.critical === false) return 'Non-Critical Notice';
+  return 'Notice';
+}
+
+function fmtDate(s) {
+  if (!s) return '—';
+  try { return new Date(s).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',timeZoneName:'short'}); }
+  catch(e) { return s; }
+}
+
+function fmtRel(d) {
+  const diff = Date.now() - d.getTime();
+  if (diff < 60000) return 'just now';
+  if (diff < 3600000) return Math.round(diff/60000) + 'm ago';
+  if (diff < 86400000) return Math.round(diff/3600000) + 'h ago';
+  return d.toLocaleDateString();
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function buildPills() {
+  const pipes = [...new Set(allEvents.map(e => e.pipe).filter(Boolean))].sort();
+  const pc = document.getElementById('pipe-pills');
+  pc.innerHTML = '';
+  pipes.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'pill'; btn.setAttribute('data-pipe', p); btn.textContent = p;
+    btn.onclick = () => toggleFilter('pipes', p, btn);
+    pc.appendChild(btn);
+  });
+  document.querySelectorAll('#sev-pills .pill').forEach(b => b.onclick = () => toggleFilter('sevs', b.dataset.sev, b));
+  document.querySelectorAll('#status-pills .pill').forEach(b => b.onclick = () => toggleFilter('statuses', b.dataset.status, b));
+  document.getElementById('search').oninput = e => { searchQuery = e.target.value.toLowerCase(); applyFilters(); };
+}
+
+function toggleFilter(group, val, btn) {
+  if (activeFilters[group].has(val)) { activeFilters[group].delete(val); btn.classList.remove('active'); }
+  else { activeFilters[group].add(val); btn.classList.add('active'); }
+  applyFilters();
+}
+
+function applyFilters() {
+  filtered = allEvents.filter(ev => {
+    const s = status(ev), sv = sev(ev);
+    if (activeFilters.pipes.size && !activeFilters.pipes.has(ev.pipe)) return false;
+    if (activeFilters.statuses.size && !activeFilters.statuses.has(s)) return false;
+    if (activeFilters.sevs.size && !activeFilters.sevs.has(sv)) return false;
+    if (searchQuery) {
+      const h = [ev.title,ev.pipe,(ev.locations||[]).join(' '),ev.flow_detail].join(' ').toLowerCase();
+      if (!h.includes(searchQuery)) return false;
+    }
+    return true;
+  });
+  updateSummary();
+  if (cardView === 'flat') renderCards();
+  else renderPointSections();
+}
+
+const SEV_ORD = {HIGH:0,MED:1,LOW:2};
+
+function renderCards() {
+  document.getElementById('card-grid').style.display = 'grid';
+  document.getElementById('point-groups').style.display = 'none';
+
+  const sorted = [...filtered].sort((a,b) =>
+    (SEV_ORD[sev(a)]??2) - (SEV_ORD[sev(b)]??2) ||
+    (b.posted_at||'').localeCompare(a.posted_at||'')
+  );
+
+  document.getElementById('card-grid').innerHTML = sorted.map(ev => buildCard(ev)).join('');
+}
+
+function buildCard(ev) {
+  const sv = sev(ev);
+  const st = status(ev);
+  const locs = (ev.locations||[]).map(normLoc).filter(Boolean).slice(0,4).join(', ');
+  const retrieved = ev.last_seen_at ? fmtRel(new Date(ev.last_seen_at)) : '';
+  return `<div class="card ${sv.toLowerCase()}">
+    <div class="card-header">
+      <span class="pipe-badge pipe-${ev.pipe}">${ev.pipe||'?'}</span>
+      <span class="badge badge-${sv}">${sv}</span>
+      <span class="badge badge-${st}">${st}</span>
+      <span class="notice-id">#${esc(ev.notice_id)}</span>
+    </div>
+    <div class="card-body">
+      ${ev.available_cap ? `<div class="cap-block">${parseInt(String(ev.available_cap).replace(/,/g,'')).toLocaleString()} dth available</div>` : ''}
+      <div class="card-title">${esc(cleanTitle(ev))}</div>
+      ${locs ? `<div class="card-locs">📍 ${esc(locs)}</div>` : ''}
+    </div>
+    <div class="card-footer">
+      <span class="card-type">${noticeType(ev)}</span>
+      ${retrieved ? ` · retrieved ${retrieved}` : ''}
+      ${ev.start ? ` · starts ${fmtDate(ev.start)}` : ''}
+      ${ev.end   ? ` · ends ${fmtDate(ev.end)}` : ''}
+      ${ev.ebb_url ? ` · <a class="ebb-link" href="${esc(ev.ebb_url)}" target="_blank" rel="noopener">EBB ↗</a>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderPointSections() {
+  document.getElementById('card-grid').style.display = 'none';
+  document.getElementById('point-groups').style.display = 'block';
+
+  const groups = {};
+  filtered.forEach(ev => {
+    const locs = (ev.locations||[]).map(normLoc).filter(Boolean);
+    const keys = locs.length ? locs : ['(Unclassified)'];
+    keys.forEach(loc => {
+      if (!groups[loc]) groups[loc] = [];
+      groups[loc].push(ev);
+    });
+  });
+
+  const sortedKeys = Object.keys(groups).sort((a,b) => {
+    const aH = groups[a].some(e => sev(e)==='HIGH');
+    const bH = groups[b].some(e => sev(e)==='HIGH');
+    if (aH && !bH) return -1; if (!aH && bH) return 1;
+    return groups[b].length - groups[a].length;
+  });
+
+  const container = document.getElementById('point-sections');
+  container.innerHTML = '';
+  sortedKeys.forEach(loc => {
+    const evs = groups[loc];
+    const hasHigh = evs.some(e => sev(e)==='HIGH');
+    const pipes = [...new Set(evs.map(e=>e.pipe).filter(Boolean))];
+    const pipeBadges = pipes.map(p=>`<span class="pipe-badge pipe-${p}" style="font-size:9px;padding:1px 5px">${p}</span>`).join(' ');
+    const activeCount = evs.filter(e=>['active','new'].includes(status(e))).length;
+
+    const sec = document.createElement('div');
+    sec.className = 'point-section' + (hasHigh ? ' open' : '');
+    sec.dataset.loc = loc.toLowerCase();
+    sec.innerHTML = `
+      <div class="point-section-header" onclick="this.parentElement.classList.toggle('open')">
+        <span class="chevron">▶</span>
+        <span style="flex:1;font-weight:600">${esc(loc)}</span>
+        ${pipeBadges}
+        ${hasHigh ? '<span class="badge badge-HIGH" style="font-size:9px">HIGH</span>' : ''}
+        <span style="color:var(--muted);font-size:11px">${activeCount} active · ${evs.length} total</span>
+      </div>
+      <div class="point-section-body">
+        <div class="point-section-grid">
+          ${evs.sort((a,b)=>(SEV_ORD[sev(a)]??2)-(SEV_ORD[sev(b)]??2)).map(ev=>buildCard(ev)).join('')}
+        </div>
+      </div>`;
+    container.appendChild(sec);
+  });
+}
+
+function filterPointSections(q) {
+  const ql = q.toLowerCase();
+  document.querySelectorAll('.point-section').forEach(s => {
+    s.style.display = (!ql || s.dataset.loc.includes(ql)) ? '' : 'none';
+  });
+}
+
+function setCardView(v) {
+  cardView = v;
+  document.getElementById('btn-flat').classList.toggle('active', v==='flat');
+  document.getElementById('btn-point').classList.toggle('active', v==='point');
+  applyFilters();
+}
+
+function updateSummary() {
+  document.getElementById('sum-total').textContent    = filtered.length;
+  document.getElementById('sum-high').textContent     = filtered.filter(e=>sev(e)==='HIGH').length;
+  document.getElementById('sum-active').textContent   = filtered.filter(e=>['active','new'].includes(status(e))).length;
+  document.getElementById('sum-upcoming').textContent = filtered.filter(e=>status(e)==='upcoming').length;
+}
+
+load();
+setInterval(load, 300000);
+</script>
+</body>
+</html>
