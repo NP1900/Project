@@ -41,7 +41,7 @@ def main():
     config = load_config()
     enabled = [c for c in config["companies"] if c.get("enabled")]
 
-    Path("site/data").mkdir(parents=True, exist_ok=True)
+    Path("data").mkdir(exist_ok=True)
 
     results = {}
     with ThreadPoolExecutor(max_workers=8) as executor:
@@ -95,9 +95,9 @@ def main():
     )
 
     # Atomic write events.json
-    tmp = Path("site/data/events.json.tmp")
+    tmp = Path("data/events.json.tmp")
     tmp.write_text(json.dumps(active, indent=2, default=str), encoding="utf-8")
-    tmp.rename("site/data/events.json")
+    tmp.rename("data/events.json")
 
     # Write status.json
     duration = round(time.time() - start, 1)
@@ -114,7 +114,7 @@ def main():
             for cid, r in results.items()
         },
     }
-    Path("site/data/status.json").write_text(
+    Path("data/status.json").write_text(
         json.dumps(status, indent=2), encoding="utf-8"
     )
 

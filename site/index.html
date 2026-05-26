@@ -298,7 +298,7 @@ const PIPE_COLORS = {
 // ── Load data ──────────────────────────────────────────────────────────────
 async function load() {
   try {
-    const r = await fetch('data/events.json?t=' + Date.now());
+    const r = await fetch('../data/events.json?t=' + Date.now());
     if (!r.ok) throw new Error(r.status);
     allEvents = await r.json();
     document.getElementById('loading').style.display = 'none';
@@ -314,7 +314,7 @@ async function load() {
 
 async function loadStatus() {
   try {
-    const r = await fetch('data/status.json?t=' + Date.now());
+    const r = await fetch('../data/status.json?t=' + Date.now());
     if (!r.ok) return;
     const s = await r.json();
     const d = new Date(s.last_run);
