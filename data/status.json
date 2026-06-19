@@ -1,19 +1,19 @@
 {
-  "last_run": "2026-06-19T11:57:10.484356+00:00",
-  "duration_seconds": 90.8,
-  "total_events": 19,
+  "last_run": "2026-06-19T18:21:59.300567+00:00",
+  "duration_seconds": 60.9,
+  "total_events": 152,
   "companies": {
     "enbridge": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
-    "gasquest": {
+    "williams": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
-    "williams": {
+    "gasquest": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -35,7 +35,7 @@
     },
     "kinder_morgan": {
       "status": "ok",
-      "event_count": 0,
+      "event_count": 152,
       "error": null
     }
   }
