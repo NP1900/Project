@@ -1,14 +1,14 @@
 {
-  "last_run": "2026-07-12T01:05:51.056605+00:00",
-  "duration_seconds": 57.6,
+  "last_run": "2026-07-12T04:36:33.653733+00:00",
+  "duration_seconds": 66.1,
   "total_events": 151,
   "companies": {
-    "enbridge": {
+    "gasquest": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
-    "gasquest": {
+    "enbridge": {
       "status": "ok",
       "event_count": 0,
       "error": null
