@@ -1,9 +1,14 @@
 {
-  "last_run": "2026-07-15T06:19:16.429927+00:00",
-  "duration_seconds": 63.1,
+  "last_run": "2026-07-15T08:39:59.349464+00:00",
+  "duration_seconds": 82.3,
   "total_events": 147,
   "companies": {
     "enbridge": {
+      "status": "ok",
+      "event_count": 0,
+      "error": null
+    },
+    "tc_energy": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -14,11 +19,6 @@
       "error": null
     },
     "williams": {
-      "status": "ok",
-      "event_count": 0,
-      "error": null
-    },
-    "tc_energy": {
       "status": "ok",
       "event_count": 0,
       "error": null
