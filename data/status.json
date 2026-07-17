@@ -1,24 +1,19 @@
 {
-  "last_run": "2026-07-17T11:47:50.455576+00:00",
-  "duration_seconds": 72.8,
-  "total_events": 152,
+  "last_run": "2026-07-17T12:53:24.083287+00:00",
+  "duration_seconds": 83.9,
+  "total_events": 151,
   "companies": {
-    "enbridge": {
-      "status": "ok",
-      "event_count": 0,
-      "error": null
-    },
     "gasquest": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
-    "tc_energy": {
+    "enbridge": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
-    "williams": {
+    "tc_energy": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -31,6 +26,11 @@
     "bhe_gts": {
       "status": "ok",
       "event_count": 19,
+      "error": null
+    },
+    "williams": {
+      "status": "ok",
+      "event_count": 0,
       "error": null
     },
     "kinder_morgan": {
