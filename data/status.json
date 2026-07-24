@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-24T22:39:32.541552+00:00",
-  "duration_seconds": 82.4,
+  "last_run": "2026-07-24T23:44:09.891968+00:00",
+  "duration_seconds": 71.1,
   "total_events": 146,
   "companies": {
     "gasquest": {
@@ -13,17 +13,17 @@
       "event_count": 0,
       "error": null
     },
-    "enbridge": {
-      "status": "ok",
-      "event_count": 0,
-      "error": null
-    },
     "tc_energy": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
     "energy_transfer": {
+      "status": "ok",
+      "event_count": 0,
+      "error": null
+    },
+    "enbridge": {
       "status": "ok",
       "event_count": 0,
       "error": null
