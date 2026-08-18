@@ -1,7 +1,7 @@
 {
-  "last_run": "2026-08-18T19:50:10.352047+00:00",
-  "duration_seconds": 81.2,
-  "total_events": 151,
+  "last_run": "2026-08-18T20:10:12.834437+00:00",
+  "duration_seconds": 115.8,
+  "total_events": 150,
   "companies": {
     "enbridge": {
       "status": "ok",
@@ -35,7 +35,7 @@
     },
     "kinder_morgan": {
       "status": "ok",
-      "event_count": 152,
+      "event_count": 151,
       "error": null
     }
   }
