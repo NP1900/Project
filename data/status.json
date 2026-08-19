@@ -1,9 +1,14 @@
 {
-  "last_run": "2026-08-19T12:04:11.045403+00:00",
-  "duration_seconds": 89.1,
+  "last_run": "2026-08-19T13:06:26.991021+00:00",
+  "duration_seconds": 81.2,
   "total_events": 150,
   "companies": {
     "gasquest": {
+      "status": "ok",
+      "event_count": 0,
+      "error": null
+    },
+    "williams": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -14,11 +19,6 @@
       "error": null
     },
     "tc_energy": {
-      "status": "ok",
-      "event_count": 0,
-      "error": null
-    },
-    "williams": {
       "status": "ok",
       "event_count": 0,
       "error": null
