@@ -1,14 +1,14 @@
 {
-  "last_run": "2026-08-25T19:43:47.485057+00:00",
-  "duration_seconds": 97.2,
-  "total_events": 152,
+  "last_run": "2026-08-25T20:04:04.814481+00:00",
+  "duration_seconds": 54.5,
+  "total_events": 151,
   "companies": {
-    "enbridge": {
+    "williams": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
-    "tc_energy": {
+    "enbridge": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -18,12 +18,12 @@
       "event_count": 0,
       "error": null
     },
-    "williams": {
+    "energy_transfer": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
-    "energy_transfer": {
+    "tc_energy": {
       "status": "ok",
       "event_count": 0,
       "error": null
