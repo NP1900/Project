@@ -1,7 +1,7 @@
 {
-  "last_run": "2026-09-03T18:06:21.636478+00:00",
-  "duration_seconds": 92.6,
-  "total_events": 154,
+  "last_run": "2026-09-03T20:59:54.211495+00:00",
+  "duration_seconds": 88.1,
+  "total_events": 153,
   "companies": {
     "enbridge": {
       "status": "ok",
