@@ -1,7 +1,7 @@
 {
-  "last_run": "2026-09-10T17:37:49.188831+00:00",
-  "duration_seconds": 104.8,
-  "total_events": 152,
+  "last_run": "2026-09-10T20:02:01.276786+00:00",
+  "duration_seconds": 89.7,
+  "total_events": 151,
   "companies": {
     "gasquest": {
       "status": "ok",
