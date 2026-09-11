@@ -1,24 +1,24 @@
 {
-  "last_run": "2026-09-11T05:08:30.302307+00:00",
-  "duration_seconds": 92.7,
+  "last_run": "2026-09-11T09:40:07.355131+00:00",
+  "duration_seconds": 83.5,
   "total_events": 151,
   "companies": {
-    "gasquest": {
-      "status": "ok",
-      "event_count": 0,
-      "error": null
-    },
     "enbridge": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
-    "tc_energy": {
+    "gasquest": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
     "williams": {
+      "status": "ok",
+      "event_count": 0,
+      "error": null
+    },
+    "tc_energy": {
       "status": "ok",
       "event_count": 0,
       "error": null
