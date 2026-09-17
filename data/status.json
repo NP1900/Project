@@ -1,19 +1,19 @@
 {
-  "last_run": "2026-09-16T23:49:17.807665+00:00",
-  "duration_seconds": 60.8,
-  "total_events": 147,
+  "last_run": "2026-09-17T01:51:22.735424+00:00",
+  "duration_seconds": 79.7,
+  "total_events": 145,
   "companies": {
     "enbridge": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
-    "williams": {
+    "gasquest": {
       "status": "ok",
       "event_count": 0,
       "error": null
     },
-    "gasquest": {
+    "williams": {
       "status": "ok",
       "event_count": 0,
       "error": null
