@@ -1,9 +1,9 @@
 {
-  "last_run": "2026-11-02T16:54:10.496035+00:00",
-  "duration_seconds": 62.0,
-  "total_events": 152,
+  "last_run": "2026-11-02T23:47:57.943072+00:00",
+  "duration_seconds": 71.5,
+  "total_events": 154,
   "companies": {
-    "williams": {
+    "enbridge": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -13,7 +13,7 @@
       "event_count": 0,
       "error": null
     },
-    "enbridge": {
+    "williams": {
       "status": "ok",
       "event_count": 0,
       "error": null
