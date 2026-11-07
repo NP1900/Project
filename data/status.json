@@ -1,14 +1,9 @@
 {
-  "last_run": "2026-11-07T07:44:15.814188+00:00",
-  "duration_seconds": 98.8,
+  "last_run": "2026-11-07T14:23:26.653244+00:00",
+  "duration_seconds": 58.9,
   "total_events": 156,
   "companies": {
     "enbridge": {
-      "status": "ok",
-      "event_count": 0,
-      "error": null
-    },
-    "tc_energy": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -31,6 +26,11 @@
     "bhe_gts": {
       "status": "ok",
       "event_count": 21,
+      "error": null
+    },
+    "tc_energy": {
+      "status": "ok",
+      "event_count": 0,
       "error": null
     },
     "kinder_morgan": {
