@@ -1,9 +1,14 @@
 {
-  "last_run": "2026-11-08T08:22:11.132461+00:00",
-  "duration_seconds": 79.6,
-  "total_events": 155,
+  "last_run": "2026-11-08T19:56:07.163310+00:00",
+  "duration_seconds": 107.4,
+  "total_events": 156,
   "companies": {
     "enbridge": {
+      "status": "ok",
+      "event_count": 0,
+      "error": null
+    },
+    "tc_energy": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -19,11 +24,6 @@
       "error": null
     },
     "energy_transfer": {
-      "status": "ok",
-      "event_count": 0,
-      "error": null
-    },
-    "tc_energy": {
       "status": "ok",
       "event_count": 0,
       "error": null
