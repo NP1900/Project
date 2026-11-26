@@ -1,9 +1,14 @@
 {
-  "last_run": "2026-11-25T22:46:29.708627+00:00",
-  "duration_seconds": 55.3,
-  "total_events": 118,
+  "last_run": "2026-11-26T04:32:30.002967+00:00",
+  "duration_seconds": 79.7,
+  "total_events": 119,
   "companies": {
     "enbridge": {
+      "status": "ok",
+      "event_count": 0,
+      "error": null
+    },
+    "tc_energy": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -14,11 +19,6 @@
       "error": null
     },
     "williams": {
-      "status": "ok",
-      "event_count": 0,
-      "error": null
-    },
-    "tc_energy": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -35,7 +35,7 @@
     },
     "kinder_morgan": {
       "status": "ok",
-      "event_count": 131,
+      "event_count": 134,
       "error": null
     }
   }
