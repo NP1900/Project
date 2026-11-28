@@ -1,9 +1,9 @@
 {
-  "last_run": "2026-11-28T04:47:29.696210+00:00",
-  "duration_seconds": 39.1,
-  "total_events": 120,
+  "last_run": "2026-11-28T13:43:34.295508+00:00",
+  "duration_seconds": 60.5,
+  "total_events": 117,
   "companies": {
-    "williams": {
+    "gasquest": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -13,7 +13,7 @@
       "event_count": 0,
       "error": null
     },
-    "gasquest": {
+    "williams": {
       "status": "ok",
       "event_count": 0,
       "error": null
@@ -35,7 +35,7 @@
     },
     "kinder_morgan": {
       "status": "ok",
-      "event_count": 134,
+      "event_count": 125,
       "error": null
     }
   }
